@@ -1,5 +1,5 @@
 const express = require('express');
-// improt middleware
+// import middleware
 const postRoutes = require('./routes');
 
 const app = express();
