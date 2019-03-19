@@ -10,6 +10,7 @@ const routes = express.Router();
 // Posts provide methods for server to retrieve data from DB
 const Posts = require('./data/db');
 
+// Initialize the req.body object
 routes.use(express.json());
 
 routes.get('/', async (req, res) => {
@@ -18,6 +19,19 @@ routes.get('/', async (req, res) => {
     res.status(200).json(posts);
   } catch (err) {
     res.status(500).json({ error: "The posts information could not be retrieved." });
+  }
+});
+
+routes.get('/:id', async (req, res) => {
+  try {
+    const post = await Posts.findById(req.params.id);    
+    if (post.length > 0) {
+      res.status(200).json(post);
+    } else {
+      res.status(404).json({ message: "The post with the specified ID does not exist." });
+    }
+  } catch {
+    res.status(500).json({ error: "The post information could not be retrieved." });
   }
 });
 
