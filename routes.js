@@ -38,8 +38,10 @@ routes.get('/:id', async (req, res) => {
 routes.post('/', async (req, res) => {
   if (req.body.title && req.body.contents) {
     try {
-      const newPost = await Posts.insert(req.body);
-      res.status(201).json(newPost);
+      const newPostId = await Posts.insert(req.body);
+      res.status(201);
+      const newPost = await Posts.findById(newPostId.id);
+      res.json(newPost);
     } catch {
       res.status(500).json({ error: "There was an error while saving the post to the database" });
     }
@@ -64,11 +66,13 @@ routes.delete('/:id', async (req, res) => {
 routes.put('/:id', async (req, res) => {
   if (req.body.title && req.body.contents) {
     try {
-      const updatedPosts = await Posts.update(req.params.id, req.body);
-      if (updatedPosts === 0) {
+      const countOfUpdatedPosts = await Posts.update(req.params.id, req.body);
+      if (countOfUpdatedPosts === 0) {
         res.status(404).json({ message: "The post with the specified ID does not exist." });
       } else {
-        res.status(200).json(updatedPosts);
+        res.status(200);
+        const updatedPost = await Posts.findById(req.params.id);
+        res.json(updatedPost);
       }
     } catch {
       res.status(500).json({ error: "The post information could not be modified." });
