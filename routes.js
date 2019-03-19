@@ -35,6 +35,31 @@ routes.get('/:id', async (req, res) => {
   }
 });
 
+routes.post('/', async (req, res) => {
+  if (req.body.title && req.body.contents) {
+    try {
+      const newPost = await Posts.insert(req.body);
+      res.status(201).json(newPost);
+    } catch {
+      res.status(500).json({ error: "There was an error while saving the post to the database" });
+    }
+  } else {
+    res.status(400).json({ errorMessage: "Please provide title and contents for the post." });
+  }
+});
+
+routes.delete('/:id', async (req, res) => {
+  try {
+    const deletedRecords = await Posts.remove(req.params.id);
+    if (deletedRecords === 0) {
+      res.status(404).json({ message: "The post with the specified ID does not exist." });
+    } else {
+      res.status(200).json(deletedRecords);
+    }
+  } catch {
+    res.status(500).json({ error: "The post could not be removed" });
+  }
+});
 
 /*
 The db.js publishes the following methods:
